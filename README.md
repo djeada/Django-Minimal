@@ -1,5 +1,7 @@
 # Django-minimal
 
+* Django ecomerce: https://youtu.be/YZvRrldjf1Y
+
 ## What is Django?
 Django is a web framework which helps you build
 interactive websites using Python. With Django you
