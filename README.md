@@ -593,3 +593,9 @@ writing data to the database.
 saaspegasus.com/guides/modern-javascript-for-django-developers/?fbclid=IwAR0iObjPedrtl5wZc1KhkKko7EIERpJ8_STkWXa-z_-zwSduaGogfXSbkAc
 * https://mattsegal.dev/django-react.html
 * github.com/codingforentrepreneurs
+
+
+## Bibilography
+
+* https://www.dj4e.com/
+* https://docs.djangoproject.com/en/4.0/intro/
