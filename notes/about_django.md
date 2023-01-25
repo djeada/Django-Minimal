@@ -1,304 +1,131 @@
-
 ## What is Django?
-Django is a web framework which helps you build
-interactive websites using Python. With Django you
-define the kind of data your site needs to work with,
-and you define the ways your users can work with
-that data.
+Django is a high-level Python web framework that enables developers to build robust and powerful web applications quickly and easily. It follows the Model-View-Controller (MVC) architectural pattern and encourages the use of reusable code.
 
+## Getting Started
 
-## Creating a project
-To start a project we’ll create a new project, create a
-database, and start a development server.
-Create a new project
+To start a new Django project, you will first need to install Django on your machine. This can be done using pip, the package installer for Python, by running the command `pip install Django`.
 
-```bash
-$ django-admin startproject learning_log .
-```
+Once Django is installed, you can create a new project using the command `django-admin startproject project_name`. This will create a new directory with the same name as the project, containing the basic project structure and settings.
 
-Create a database
-```bash
+To create a database for your project, you can use the command `python manage.py makemigrations` followed by `python manage.py migrate` to create the necessary tables.
 
-$ python manage.py migrate
-```
+You can then start the development server by running `python manage.py runserver` and view your project by navigating to `http://localhost:8000/` in your web browser.
 
-View the project
-After issuing this command, you can view the project at
-http://localhost:8000/.
-$ python manage.py runserver
+## Models
 
-HOW TO START PROJECT in same dir:
+Models in Django are used to define the data structure of your application. They are defined as Python classes that inherit from the django.db.models.Model class and use fields such as CharField, IntegerField, and DateTimeField to specify the data types and attributes of the fields.
 
-django-admin startproject todo .
-
-## Working with models
-The data in a Django project is structured as a set of
-models. 
-Defining a model
-To define the models for your app, modify the file models.py that
-was created in your app’s folder. The __str__() method tells
-Django how to represent data objects based on this model.
+For example, a model for a blog post might look like this:
 
 ```python
 from django.db import models
-class Topic(models.Model):
-"""A topic the user is learning about."""
-text = models.CharField(max_length=200)
-date_added = models.DateTimeField(
-auto_now_add=True)
-def __str__(self):
-return self.text
+
+class BlogPost(models.Model):
+    title = models.CharField(max_length=255)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return self.title
 ```
 
-Activating a model
-To use a model the app must be added to the list
-INSTALLED_APPS, which is stored in the project’s settings.py file.
+In this example, the BlogPost model has three fields: title, content, and created_at. The auto_now_add and auto_now attributes on the created_at and updated_at fields respectively ensure that the fields are automatically set to the current date and time when a new object is created or an existing object is updated.
+
+## URLs and Views
+
+Django uses a URL dispatcher to map URLs to views, which are responsible for handling requests and returning responses. The project's urls.py file is used to define the URLs for the entire project, while each app has its own urls.py file for defining the URLs for that app.
+
+For example, the urls.py file for an app called blog might look like this:
 
 ```python
-    INSTALLED_APPS = [
-      # My apps.
-      'learning_logs',
-      # Default Django apps.
-      'django.contrib.admin',
-    ]
-```
-    
-## Building a simple home page
+from django.urls import path
+from . import views
 
-Users interact with a project through web pages, and a
-project’s home page can start out as a simple page with no
-data. A page usually needs a URL, a view, and a template.
-
-## Mapping a project’s URLs
-The project’s main urls.py file tells Django where to find the urls.py
-files associated with each app in the project.
-
-    from django.contrib import admin
-    from django.urls import path, include
-    urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', include('learning_logs.urls')),
-    ]
-
-### Mapping an app’s URLs
-An app’s urls.py file tells Django which view to use for each URL in
-the app. You’ll need to make this file yourself, and save it in the
-app’s folder.
-
-    from django.urls import path
-    from . import views
-    app_name = 'learning_logs'
-    urlpatterns = [
-    # Home page.
+app_name = 'blog'
+urlpatterns = [
     path('', views.index, name='index'),
-    ]
-    
-## Writing a simple view
-A view takes information from a request and sends data to the
-browser, often through a template. View functions are stored in an
-app’s views.py file. This simple view function doesn’t pull in any
-data, but it uses the template index.html to render the home page.
+    path('<int:post_id>/', views.detail, name='detail'),
+]
+```
 
-    from django.shortcuts import render
-    def index(request):
-    """The home page for Learning Log."""
-    return render(request,
-    'learning_logs/index.html')
+This file maps the root URL (/) to the index view and the /<int:post_id>/ URL to the detail view. The path function takes the URL pattern as the first argument and the view function as the second argument.
 
-## Writing a simple template
-A template sets up the structure for a page. It’s a mix of html and
-template code, which is like Python but not as powerful. Make a
-folder called templates inside the project folder. Inside the
-templates folder make another folder with the same name as the
-app. This is where the template files should be saved.
-The home page template will be saved as
-learning_logs/templates/learning_logs/index.html.
+Views are defined in the views.py file of each app, and are typically responsible for processing the request, interacting with the model, and returning a response.
 
-<p>Learning Log</p>
-<p>Learning Log helps you keep track of your
-learning, for any topic you're learning
-about.</p>
+For example, the index view for the blog app might look like this:
 
-## Template inheritance
-Many elements of a web page are repeated on every page
-in the site, or every page in a section of the site. By writing
-one parent template for the site, and one for each section,
-you can easily modify the look and feel of your entire site.
+```python
+from django.shortcuts import render
+from .models import BlogPost
 
-## The parent template
-The parent template defines the elements common to a set of
-pages, and defines blocks that will be filled by individual pages.
+def index(request):
+    latest_posts = BlogPost.objects.order_by('-created_at')[:5]
+    context = {'latest_posts': latest_posts}
+    return render(request, 'blog/index.html', context)
+```
 
-    <p>
-    <a href="{% url 'learning_logs:index' %}">
-    Learning Log
-    </a>
-    </p>
-    {% block content %}{% endblock content %}
+## Templates
 
-## The child template
-The child template uses the {% extends %} template tag to pull in
-the structure of the parent template. It then defines the content for
-any blocks defined in the parent template.
+Django uses templates to separate the presentation logic from the views. Templates are written in a special language called Django template language (DTL) which allows you to define the structure and layout of a page, and insert data retrieved from the view.
 
-    {% extends 'learning_logs/base.html' %}
-    {% block content %}
-    <p>
-    Learning Log helps you keep track
-    of your learning, for any topic you're
-    learning about.
-    </p>
-    {% endblock content %}
+For example, the index.html template for the blog app might look like this:
 
-## Template indentation
-Python code is usually indented by four spaces. In
-templates you’ll often see two spaces used for indentation,
-because elements tend to be nested more deeply in
-templates.
+```html
+<h1>Latest Posts</h1>
+<ul>
+{% for post in latest_posts %}
+    <li>{{ post.title }}</li>
+{% endfor %}
+</ul>
+```
 
-## Another model
-A new model can use an existing model. The ForeignKey
-attribute establishes a connection between instances of the
-two related models. Make sure to migrate the database
-after adding a new model to your app.
+This template uses DTL to iterate over the latest_posts variable passed from the view, and display the title of each post in an unordered list.
 
-Defining a model with a foreign key
-    
-    class Entry(models.Model):
-    """Learning log entries for a topic."""
-    topic = models.ForeignKey(Topic,
-    on_delete=models.CASCADE)
-    text = models.TextField()
-    date_added = models.DateTimeField(
-    auto_now_add=True)
-    def __str__(self):
-    return f"{self.text[:50]}..."
+### Template Inheritance
 
-## Building a page with data
-Most pages in a project need to present data that’s specific
-to the current user.
+Django also supports template inheritance, which allows you to define a base template containing the common elements of your site (such as the header, footer, and navigation), and then extend that template in other templates to add unique content. This allows you to keep your code DRY (Don't Repeat Yourself) and make global changes to the site's layout more easily.
 
-## URL parameters
-A URL often needs to accept a parameter telling it which data to
-access from the database. The URL pattern shown here looks for
-the ID of a specific topic and assigns it to the parameter topic_id.
+For example, you might have a base.html template that looks like this:
 
-    urlpatterns = [
-    --snip-# Detail page for a single topic.
-    path('topics/<int:topic_id>/', views.topic,
-    name='topic'),
-    ]
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}Default Title{% endblock %}</title>
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="{% url 'index' %}">Home</a>
+        </nav>
+    </header>
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+    <footer>
+        Copyright ©2022
+    </footer>
+</body>
+</html>
+```
 
-## Using data in a view
-The view uses a parameter from the URL to pull the correct data
-from the database. In this example the view is sending a context
-dictionary to the template, containing data that should be displayed
-on the page. You'll need to import any model you're using.
+And then extend this template in the index.html template:
 
-    def topic(request, topic_id):
-    """Show a topic and all its entries."""
-    topic = Topic.objects.get(id=topic_id)
-    entries = topic.entry_set.order_by(
-    '-date_added')
-    context = {
-    'topic': topic,
-    'entries': entries,
-    }
-    return render(request,
-    'learning_logs/topic.html', context)
+```html
+{% extends 'base.html' %}
 
-## Restarting the development server
-If you make a change to your project and the change
-doesn’t seem to have any effect, try restarting the server:
+{% block title %}Latest Posts{% endblock %}
 
-$ python manage.py runserver
+{% block content %}
+<h1>Latest Posts</h1>
+<ul>
+{% for post in latest_posts %}
+    <li>{{ post.title }}</li>
+{% endfor %}
+</ul>
+{% endblock %}
+```
 
-## Using data in a template
-The data in the view function’s context dictionary is available
-within the template. This data is accessed using template
-variables, which are indicated by doubled curly braces.
-The vertical line after a template variable indicates a filter. In this
-case a filter called date formats date objects, and the filter
-linebreaks renders paragraphs properly on a web page.
-
-    {% extends 'learning_logs/base.html' %}
-    {% block content %}
-    <p>Topic: {{ topic }}</p>
-    <p>Entries:</p>
-    <ul>
-    {% for entry in entries %}
-    <li>
-    <p>
-    {{ entry.date_added|date:'M d, Y H:i' }}
-    </p>
-    <p>
-    {{ entry.text|linebreaks }}
-    </p>
-    </li>
-    {% empty %}
-    <li>There are no entries yet.</li>
-    {% endfor %}
-    </ul>
-    {% endblock content %}
-
-## The Django shell
-You can explore the data in your project from the command
-line. This is helpful for developing queries and testing code
-snippets.
-
-Start a shell session
-$ python manage.py shell
-
-Access data from the project
-
-    >>> from learning_logs.models import Topic
-    >>> Topic.objects.all()
-    [<Topic: Chess>, <Topic: Rock Climbing>]
-    >>> topic = Topic.objects.get(id=1)
-    >>> topic.text
-    'Chess'
-
-## Users and forms
-Most web applications need to let users create
-accounts. This lets users create and work with their
-own data. Some of this data may be private, and
-some may be public. Django’s forms allow users to
-enter and modify their data.
-
-## User accounts
-User accounts are handled by a dedicated app called
-users. Users need to be able to register, log in, and log
-out. Django automates much of this work for you.
-
-## Making a users app
-After making the app, be sure to add 'users' to INSTALLED_APPS
-in the project’s settings.py file.
-
-$ python manage.py startapp users
-
-## Including URLS for the users app
-Add a line to the project’s urls.py file so the users app’s URLs are
-included in the project.
-
-    from django.contrib import admin
-    from django.urls import path, include
-    urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('users/', include('users.urls')),
-    path('', include('learning_logs.urls')),
-    ]
-
-## Using forms in Django
-There are a number of ways to create forms and work with
-them. You can use Django’s defaults, or completely
-customize your forms. For a simple way to let users enter
-data based on your models, use a ModelForm. This creates
-a form that allows users to enter data that will populate the
-fields on a model.
-The register view on the back of this sheet shows a simple
-approach to form processing. If the view doesn’t receive
-data from a form, it responds with a blank form. If it
-receives POST data from a form, it validates the data and
-then saves it to the database.
-
+In this way, you can define the common elements of your site in a single template and reuse them in other templates.
 
