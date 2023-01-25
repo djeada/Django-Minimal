@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+<form method="post" action="{% url 'add_todo_item' %}">
+  {% csrf_token %}
+  <input type="text" name="task_description" placeholder="Enter new task">
+  <input type="submit" value="Add">
+</form>
+
+
+
+{% block content %}
+<h1>To-Do List</h1>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Add task">
+</form>
+{% if todo_items %}
+  <ul>
+    {% for todo_item in todo_items %}
+      <li>{{ todo_item.task }}</li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>No tasks to display.</p>
+{% endif %}
+{% endblock %}
