@@ -46,9 +46,9 @@ Django provides a built-in forms system that allows you to easily handle user in
 
 To create a form, you would create a class that inherits from Django's forms.Form or forms.ModelForm (if you want the form to be based on a model). You can then define the fields of the form by adding attributes to the class, such as CharField, EmailField, IntegerField, etc. Each field represents an input element in the form, and you can specify various options such as required, default value, and validations.
 
-To generate an HTML form, you can use the form.as_p, form.as_table, or form.as_ul method, which will render the form as a series of <p>, <table>, or <ul> elements respectively, with each field as a separate element.
+To generate an HTML form, you can use the form.as_p, form.as_table, or form.as_ul method, which will render the form as a series of `<p>`, `<table>`, or `<ul>` elements respectively, with each field as a separate element.
 
-When the form is submitted, you can use the form.is_valid() method to check if the form data is valid, and if it is, you can access the cleaned data using the form.cleaned_data attribute.
+When the form is submitted, you can use the `form.is_valid()` method to check if the form data is valid, and if it is, you can access the cleaned data using the form.cleaned_data attribute.
 
 You can also use the form.errors attribute to access any error messages that were generated during validation.
 
