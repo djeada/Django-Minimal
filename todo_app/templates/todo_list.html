@@ -1,30 +1,56 @@
+
+
+
 {% extends 'base.html' %} {% block title %}To-Do List{% endblock %} {% block content %}
 
-<form method="post" action="{% url 'add_todo_item' %}">
-    {% csrf_token %} {{ form.as_p }}
-    <input type="submit" value="Add task">
-</form>
+<h1>Add a Task</h1>
 
-<h1>To-Do List</h1>
+<div class="new-task-form">
+<form method="post" action="{% url 'add_todo_item' %}">
+  {% csrf_token %}
+  <div style="display: inline-block">
+      {{ form.as_p }}
+  </div>
+  <input type="submit" value="Add task" style="display: inline-block">
+</form>
+</div>
+<h1>Current Tasks</h1>
 
 {% if todo_items %}
-<ul>
-    {% for todo_item in todo_items %}
-    <li>{{ todo_item.task }} -
+<table class="todo_list">
+  <thead>
+    <tr>
+      <th>Task</th>
+      <th>Date Created</th>
+      <th>Completed</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for todo_item in todo_items %}
+  <tr >
+      <td>{{ todo_item.task }}</td>
+      <td>{{todo_item.created_at}}</td>
+      <td>
         <form method="post" action="{% url 'update_todo_item' todo_item.pk %}">
-            {% csrf_token %}
-            <input type="checkbox" name="completed" {% if todo_item.completed %}checked{% endif %}>
+          {% csrf_token %}
+          <input type="checkbox" name="completed" {% if todo_item.completed %}checked{% endif %} onchange="this.form.submit()">
         </form>
-        - {{todo_item.created_at}}
-        <form method="post" action="{% url 'remove_todo_item' todo_item.pk %}">
-            {% csrf_token %}
-            <input type="submit" value="Remove">
-        </form>
-    </li>
-    {% endfor %}
-</ul>
+    </td>
+      <td>
+          <form method="post" action="{% url 'remove_todo_item' todo_item.pk %}">
+              {% csrf_token %}
+              <input type="submit" value="Remove">
+          </form>
+      </td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+
 {% else %}
 <p>No tasks to display.</p>
 {% endif %} 
 
 {% endblock %}
+

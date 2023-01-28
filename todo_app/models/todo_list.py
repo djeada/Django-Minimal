@@ -2,6 +2,10 @@ from django.db import models
 
 
 class TodoList(models.Model):
+    """
+    This is the model for TodoList, representing a single to-do item.
+    """
+
     task = models.CharField(max_length=255)
     completed = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)

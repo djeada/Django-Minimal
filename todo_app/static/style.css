@@ -1,0 +1,38 @@
+body {
+    font-family: sans-serif;
+    background-color: #ffffff;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.todo_list {
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 0;
+    list-style: none;
+}
+
+thead {
+    background-color: #f5f5f5;
+}
+
+td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+td:last-child {
+    text-align: right;
+}
+
+
+.new-task-form {
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    justify-content: center;
+}
