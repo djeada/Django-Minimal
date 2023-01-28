@@ -24,6 +24,8 @@ To run the tests for this application, run the command "python manage.py test" f
 - Update the status of a task by clicking on the task
 - Delete a task by clicking on remove button
 
+![django_todo](https://user-images.githubusercontent.com/37275728/215296487-ab139fa8-4948-4344-8bd3-b77bef9a0903.png)
+
 ## Step by step guide for creating a To-do app using Django
 If you're interested in creating a similar application, you can follow these steps:
 
